@@ -189,4 +189,4 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL;
 
-SELECT obter_nome_times(11);
+SELECT obter_nome_times(1);

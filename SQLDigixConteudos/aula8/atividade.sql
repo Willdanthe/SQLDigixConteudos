@@ -65,3 +65,84 @@ insert into au8.Trabalha_Em values (123, 1, 40);
 insert into au8.Trabalha_Em values (456, 2, 40);
 insert into au8.Trabalha_Em values (789, 3, 40);
 
+-- 1) Função que retorna o salário de um empregado dado o CPF
+CREATE OR REPLACE FUNCTION AU8.SALARIO_EMPREGADO(CPF_PARAMETRO INTEGER) RETURNS FLOAT AS $$
+DECLARE
+    V_SALARIO FLOAT;
+BEGIN 
+    SELECT E.salario AS "Salário" INTO V_SALARIO FROM AU8.EMPREGADO E WHERE CPF_PARAMETRO = CPF;
+    RETURN V_SALARIO;
+END;
+$$ LANGUAGE PLPGSQL;
+
+SELECT AU8.salario_empregado(123);
+
+-- 2) Função que retorna o nome do departamento de um empregado dado o CPF
+CREATE OR REPLACE FUNCTION AU8.EMPREGADO_DEPARTAMENTO(CPF_PARAMETRO INTEGER) RETURNS VARCHAR(50) AS $$
+DECLARE
+    V_NOMEDEP VARCHAR(50);
+BEGIN
+    SELECT D.NOMEDEP AS "Nome do Departamento" into V_NOMEDEP FROM AU8.empregado E
+    JOIN AU8.departamento D ON D.numdep = E.NUMDEP
+    WHERE CPF_PARAMETRO = E.CPF;
+    RETURN V_NOMEDEP;
+END;
+$$ LANGUAGE PLPGSQL;
+
+SELECT AU8.empregado_departamento(456);
+
+-- 3) Função que retorna o nome do gerente de um departamento dado o NumDep
+CREATE OR REPLACE FUNCTION AU8.GERENTE_DEPARTAMENTO(NUMDEP_PARAMETRO INTEGER) RETURNS VARCHAR(50) AS $$
+DECLARE
+    V_NOMEGER VARCHAR(50);
+BEGIN
+    SELECT E.NOME AS "Nome do Gerente" into V_NOMEGER FROM AU8.departamento D
+    JOIN AU8.empregado E ON D.numdep = E.NUMDEP
+    WHERE NUMDEP_PARAMETRO = D.numdep;
+    RETURN V_NOMEGER;
+END;
+$$ LANGUAGE PLPGSQL;
+
+SELECT AU8.gerente_departamento(3);
+
+-- 4) Função que retorna o nome do projeto de um empregado dado o CPF
+CREATE OR REPLACE FUNCTION AU8.EMPREGADO_PROJETO(CPF_PARAMETRO INTEGER) RETURNS VARCHAR(50) AS $$
+DECLARE
+    V_NOMEPROJ VARCHAR(50);
+BEGIN
+    SELECT P.nomeproj AS "Nome Projeto" into V_NOMEPROJ FROM AU8.projeto P
+    JOIN AU8.EMPREGADO E ON E.numdep = P.NUMDEP
+    WHERE CPF_PARAMETRO = E.CPF;
+    RETURN V_NOMEPROJ;
+END;
+$$ LANGUAGE PLPGSQL;
+
+SELECT * FROM AU8.empregado_projeto(789);
+-- 5) Função que retorna o nome do dependente de um empregado dado o CPF
+CREATE OR REPLACE FUNCTION AU8.EMPREGADO_DEPENDENTE(CPF_PARAMETRO INTEGER) RETURNS VARCHAR(50) AS $$
+DECLARE
+    V_NOMEDEPEN VARCHAR(50);
+BEGIN
+    SELECT D.nomeDEP AS "Nome Dependente" into V_NOMEDEPEN FROM AU8.dependente D
+    JOIN AU8.EMPREGADO E ON E.CPF = D.CPFE
+    WHERE CPF_PARAMETRO = E.CPF;
+    RETURN V_NOMEDEPEN;
+END;
+$$ LANGUAGE PLPGSQL;
+
+SELECT * FROM AU8.empregado_dependente(789);
+-- 6) Função que retorna o nome do gerente de um empregado dado o CPF
+CREATE OR REPLACE FUNCTION AU8.EMPREGADO_GERENTE(CPF_PARAMETRO INTEGER) RETURNS VARCHAR(50) AS $$
+DECLARE
+    V_NOMEDEPEN VARCHAR(50);
+BEGIN
+    SELECT E1.nome AS "Nome Gerente" into V_NOMEDEPEN FROM AU8.empregado E1 
+    JOIN AU8.EMPREGADO E ON E.CPF = D.CPFE
+    WHERE CPF_PARAMETRO = E.CPF;
+    RETURN V_NOMEDEPEN;
+END;
+$$ LANGUAGE PLPGSQL;
+
+-- 7) Função que retorna a quantidade de horas que um empregado trabalha em um projeto dado o CPF
+
+-- 8) Função com Exception que retorna o salário de um empregado dado o CPF
